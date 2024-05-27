@@ -30,7 +30,7 @@ Vagrant.configure("2") do |config|
   config.vm.boot_timeout = 900
 
   config.vm.define "dz4_jenkins" do |build|
-    build.vm.box = "gusztavvargadr/docker-linux"
+    build.vm.box = "docker-server"
     build.vm.hostname = "jenkins"
     build.vm.network "public_network", type: "dhcp"
     build.vm.network "private_network", ip: "192.168.33.51", virtualbox__intnet: true
@@ -47,7 +47,7 @@ Vagrant.configure("2") do |config|
   end
 
   config.vm.define "dz4_app" do |vproapp|
-    vproapp.vm.box = "gusztavvargadr/docker-linux"
+    vproapp.vm.box = "docker-server"
     vproapp.vm.hostname = "app"
     vproapp.vm.network "public_network", type: "dhcp"
     vproapp.vm.network "private_network", ip: "192.168.33.54", virtualbox__intnet: true
