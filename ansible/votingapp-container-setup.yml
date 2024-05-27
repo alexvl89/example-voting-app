@@ -23,12 +23,12 @@
         dest: /tmp/voapp/docker-compose.yml
         force: yes
 
-    # Копирование docker файлов
-    - name: Copy Sh Files
-      template:
-        src: ./healthchecks/postgres.sh
-        dest: /tmp/voapp/postgres.sh
-        force: yes
+    # # Копирование docker файлов
+    # - name: Copy Sh Files
+    #   template:
+    #     src: ./healthchecks/postgres.sh
+    #     dest: /tmp/voapp/postgres.sh
+    #     force: yes
 
     # Останавливаем все запущенные контейнеры
     - name: StopAllDockerContainers
