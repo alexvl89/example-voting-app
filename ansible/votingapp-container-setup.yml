@@ -1,45 +1,60 @@
 ---
-- name: Deploy containers
-  hosts: appsrvgrp       
+- name: Deploy
+  hosts: appsrvgrp
   become: yes
 
   tasks:
-    - name: Include vars
+    # Переменные
+    - name: IncludeVars
       include_vars:
         dir: vars
 
-    - name: Make dir
+    # Папка для временных файлов
+    - name: CreateTempDir
       file:
-        path: /tmp/votingapp
+        path: /tmp/voapp
         state: directory
+        mode: 0775
 
-    - name: Copy DC file
+    # Копирование docker файлов
+    - name: CopyDockerComposeFiles
       template:
         src: templates/docker-compose.j2
-        dest: /tmp/votingapp/docker-compose.yml
+        dest: /tmp/voapp/docker-compose.yml
         force: yes
 
-    - name: Stop all docker containers
+    # Копирование docker файлов
+    - name: Copy Sh Files
+      template:
+        src: ./healthchecks/postgres.sh
+        dest: /tmp/voapp/postgres.sh
+        force: yes
+
+    # Останавливаем все запущенные контейнеры
+    - name: StopAllDockerContainers
       shell:
         cmd: docker stop $(docker ps -q)
       ignore_errors: true
       tags:
         - docker-cleanup
 
-    - name: Remove all unused and dangling docker images
+    # Удаляем старые образы
+    - name: RemoveAllUnusedDockerImages
       shell:
         cmd: docker system prune --all --force
       tags:
         - docker-cleanup
 
-    - name: Setup with docker-compose
+    # Поднимаем приложения из контейнера
+    - name: SetupWithDocker
       shell:
         cmd: docker-compose up -d
-        chdir: /tmp/votingapp
+        chdir: /tmp/voapp
       register: contdeploy
       tags:
         - container-setup
 
-    - name: Display result
+    # Вывести на консоль
+    - name: DisplayResult
       debug:
-        msg: "Log from docker-compose: \n {{ contdeploy.stdout }}\n"
+        msg: "Log from docker-compose: \n {{contdeploy}}\n"
